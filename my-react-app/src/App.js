@@ -47,7 +47,7 @@ function App() {
       <div className="max-w-4xl mx-auto">
 
         <h1 className="text-4xl font-bold text-center mb-8 text-gray-800">
-          📝 Notes App
+          📝 Notes App me maine change kiya jenkins ke pipline ko check  krne ke liye
         </h1>
 
         {/* Add Note Form */}
