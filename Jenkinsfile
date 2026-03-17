@@ -67,11 +67,13 @@ git branch: 'main', url: 'https://github.com/Ashishbdj/Jenkins_Repo.git'
  aws ecs update-service \
  --cluster $CLUSTER \
  --service $BACKEND_SERVICE \
+ --task-definition NotesBackend  \
  --force-new-deployment
 
  aws ecs update-service \
  --cluster $CLUSTER \
  --service $FRONTEND_SERVICE \
+ --task-definition NotesFrontend \
  --force-new-deployment
  '''
  }
