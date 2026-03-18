@@ -4,8 +4,10 @@ const API = process.env.REACT_APP_API_URL;
 
 function App() {
   const [notes, setNotes] = useState([]);
+  const [search, setSearch] = useState("");
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [dark, setDark] = useState(false);
 
   const fetchNotes = async () => {
     const res = await fetch(`${API}/notes`);
@@ -37,72 +39,104 @@ function App() {
     await fetch(`${API}/notes/${id}`, {
       method: "DELETE"
     });
-
     fetchNotes();
   };
 
+  const filteredNotes = notes.filter((note) =>
+    note.title.toLowerCase().includes(search.toLowerCase())
+  );
+
   return (
-    <div className="min-h-screen bg-gray-100 p-10">
-      
-      <div className="max-w-4xl mx-auto">
+    <div className={dark ? "dark" : ""}>
+      <div className="min-h-screen bg-gray-100 dark:bg-gray-900 transition">
 
-        <h1 className="text-4xl font-bold text-center mb-8 text-gray-800">
-          📝 Notes App me maine change kiya jenkins ke pipline ko check  krne ke liye
-        </h1>
-
-        {/* Add Note Form */}
-        <div className="bg-white shadow-md rounded-lg p-6 mb-8">
-
-          <input
-            className="w-full border p-3 rounded mb-4 focus:outline-none focus:ring-2 focus:ring-blue-400"
-            placeholder="Note Title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          />
-
-          <textarea
-            className="w-full border p-3 rounded mb-4 focus:outline-none focus:ring-2 focus:ring-blue-400"
-            placeholder="Write your note..."
-            rows="3"
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-          />
+        {/* Navbar */}
+        <div className="flex justify-between items-center px-6 py-4 bg-white dark:bg-gray-800 shadow">
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-white">
+            📝 Notes App
+          </h1>
 
           <button
-            onClick={addNote}
-            className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded transition"
+            onClick={() => setDark(!dark)}
+            className="bg-gray-200 dark:bg-gray-700 px-4 py-2 rounded"
           >
-            Add Note
+            {dark ? "☀️ Light" : "🌙 Dark"}
           </button>
-
         </div>
 
-        {/* Notes Grid */}
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="max-w-5xl mx-auto p-6">
 
-          {notes.map((note) => (
-            <div
-              key={note.id}
-              className="bg-white shadow-lg rounded-lg p-5 hover:shadow-xl transition"
+          {/* Search */}
+          <input
+            placeholder="🔍 Search notes..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full p-3 mb-6 rounded-lg border dark:bg-gray-800 dark:text-white"
+          />
+
+          {/* Add Note */}
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow mb-8">
+            <input
+              className="w-full p-3 mb-4 border rounded dark:bg-gray-700 dark:text-white"
+              placeholder="Note Title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+            />
+
+            <textarea
+              className="w-full p-3 mb-4 border rounded dark:bg-gray-700 dark:text-white"
+              placeholder="Write your note..."
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+            />
+
+            <button
+              onClick={addNote}
+              className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded"
             >
-              <h3 className="text-xl font-semibold text-gray-800 mb-2">
-                {note.title}
-              </h3>
+              Add Note
+            </button>
+          </div>
 
-              <p className="text-gray-600 mb-4">
-                {note.content}
-              </p>
-
-              <button
-                onClick={() => deleteNote(note.id)}
-                className="text-red-500 hover:text-red-700"
-              >
-                Delete
-              </button>
+          {/* Notes */}
+          {filteredNotes.length === 0 ? (
+            <div className="text-center text-gray-500 dark:text-gray-400">
+              No notes found 😢
             </div>
-          ))}
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              {filteredNotes.map((note) => (
+                <div
+                  key={note.id}
+                  className="bg-white dark:bg-gray-800 p-5 rounded-xl shadow hover:shadow-xl transition transform hover:-translate-y-1"
+                >
+                  <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">
+                    {note.title}
+                  </h3>
 
+                  <p className="text-gray-600 dark:text-gray-300 mb-4">
+                    {note.content}
+                  </p>
+
+                  <button
+                    onClick={() => deleteNote(note.id)}
+                    className="text-red-500 hover:text-red-700"
+                  >
+                    Delete
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
+
+        {/* Floating Add Button */}
+        <button
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          className="fixed bottom-6 right-6 bg-blue-500 text-white p-4 rounded-full shadow-lg hover:bg-blue-600"
+        >
+          ↑
+        </button>
 
       </div>
     </div>
